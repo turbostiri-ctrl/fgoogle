@@ -1,0 +1,242 @@
+{
+  "id": "102019ac25e24b87559b8f6455f7aa2796b",
+  "version": "102019ac25e24b8744c9fe4c558732cbc6e",
+  "schema": {
+    "name": "workout",
+    "description": "Details individual workouts, which can be part of a plan or standalone.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for the workout.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal identifier."
+        }
+      },
+      {
+        "name": "workout_plan_id",
+        "description": "Identifier of the workout plan this workout belongs to.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Links workout to a plan."
+        },
+        "nullable": true
+      },
+      {
+        "name": "name",
+        "description": "Name of the workout.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly visible workout name."
+        }
+      },
+      {
+        "name": "description",
+        "description": "A brief description of the workout.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly visible workout description."
+        },
+        "nullable": true
+      },
+      {
+        "name": "category",
+        "description": "Category of the workout (e.g., Cardio, Strength, Yoga).",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public classification of content."
+        }
+      },
+      {
+        "name": "difficulty_level",
+        "description": "Difficulty level of the workout.",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public classification of content."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Beginner"
+          },
+          {
+            "number": 2,
+            "value": "Intermediate"
+          },
+          {
+            "number": 3,
+            "value": "Advanced"
+          }
+        ]
+      },
+      {
+        "name": "duration_minutes",
+        "description": "Estimated duration of the workout in minutes.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public information about the workout."
+        },
+        "numeric": "uint"
+      },
+      {
+        "name": "video_url",
+        "description": "URL of the instructional video for the workout.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly accessible content link."
+        },
+        "nullable": true
+      },
+      {
+        "name": "instructions",
+        "description": "Step-by-step instructions for the workout.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly accessible instructions."
+        }
+      },
+      {
+        "name": "equipment_needed",
+        "description": "List of equipment needed for the workout.",
+        "type": 101,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public information about the workout."
+        },
+        "nullable": true,
+        "items": {
+          "type": 1
+        }
+      },
+      {
+        "name": "target_muscles",
+        "description": "List of target muscle groups for the workout.",
+        "type": 101,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public information about the workout."
+        },
+        "nullable": true,
+        "items": {
+          "type": 1
+        }
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "workout_plan_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "category"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "difficulty_level"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      }
+    ],
+    "relations": [
+      {
+        "referencing_fields": [
+          "workout_plan_id"
+        ],
+        "referenced_entity": {
+          "name": "workout_plan"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "task": {
+    "id": "6927837783045624aba5d052",
+    "root": "6927837783045624aba5d052",
+    "project": "6927837783045624aba5d051",
+    "user": "98215300-30c1-7025-5804-86fe38e61976"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

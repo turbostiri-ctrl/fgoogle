@@ -1,0 +1,188 @@
+{
+  "id": "102019ac25e24b876519d547ddf54c6ffbb",
+  "version": "102019ac25e24b8744c9fe4c558732cbc6e",
+  "schema": {
+    "name": "lifestyle_content",
+    "description": "Stores articles and videos for users.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for the lifestyle content.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal identifier."
+        }
+      },
+      {
+        "name": "title",
+        "description": "Title of the content.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly visible title."
+        }
+      },
+      {
+        "name": "content",
+        "description": "The main body of the content (e.g., article text).",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly visible content."
+        }
+      },
+      {
+        "name": "category",
+        "description": "Category of the content (e.g., Mindfulness, Nutrition, Fitness).",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public classification of content."
+        }
+      },
+      {
+        "name": "content_type",
+        "description": "Type of content (Article or Video).",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Public classification of content."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Article"
+          },
+          {
+            "number": 2,
+            "value": "Video"
+          }
+        ]
+      },
+      {
+        "name": "is_premium",
+        "description": "Indicates if the content is for premium users only.",
+        "type": 3,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal flag for content access control."
+        }
+      },
+      {
+        "name": "image_url",
+        "description": "URL of a thumbnail or cover image for the content.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly accessible content link."
+        },
+        "nullable": true
+      },
+      {
+        "name": "video_url",
+        "description": "URL of the video file, if content type is video.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 1,
+          "reason": "Publicly accessible content link."
+        },
+        "nullable": true
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "category"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "content_type"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "is_premium"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      }
+    ]
+  },
+  "task": {
+    "id": "6927837783045624aba5d052",
+    "root": "6927837783045624aba5d052",
+    "project": "6927837783045624aba5d051",
+    "user": "98215300-30c1-7025-5804-86fe38e61976"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

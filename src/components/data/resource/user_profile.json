@@ -1,0 +1,305 @@
+{
+  "id": "102019ac25e7e4077698af91d7354608d55",
+  "version": "102019aca8871857d468edae750e17b27cf",
+  "schema": {
+    "name": "user_profile",
+    "description": "Stores user profile information, including personal details, fitness goals, and subscription status.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for the user profile.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal identifier."
+        }
+      },
+      {
+        "name": "email",
+        "description": "User's email address, used for login and communication.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Personally Identifiable Information (PII)."
+        },
+        "format": "email"
+      },
+      {
+        "name": "password",
+        "description": "User's hashed password for authentication.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 4,
+          "reason": "Highly sensitive authentication credential."
+        },
+        "encryption": true,
+        "format": "password"
+      },
+      {
+        "name": "name",
+        "description": "User's full name.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Personally Identifiable Information (PII)."
+        }
+      },
+      {
+        "name": "age",
+        "description": "User's age in years.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Personal health information."
+        },
+        "nullable": true,
+        "numeric": "uint"
+      },
+      {
+        "name": "weight",
+        "description": "User's weight in kilograms.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Personal health information."
+        },
+        "nullable": true,
+        "numeric": "float"
+      },
+      {
+        "name": "height",
+        "description": "User's height in centimeters.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Personal health information."
+        },
+        "nullable": true,
+        "numeric": "float"
+      },
+      {
+        "name": "fitness_level",
+        "description": "User's self-assessed fitness level.",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User-provided fitness data for personalization."
+        },
+        "nullable": true,
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Beginner"
+          },
+          {
+            "number": 2,
+            "value": "Intermediate"
+          },
+          {
+            "number": 3,
+            "value": "Advanced"
+          }
+        ]
+      },
+      {
+        "name": "objectives",
+        "description": "User's fitness objectives.",
+        "type": 101,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User goals for personalization."
+        },
+        "nullable": true,
+        "items": {
+          "type": 100,
+          "enumeration": [
+            {
+              "value": "Unspecified"
+            },
+            {
+              "number": 1,
+              "value": "WeightLoss"
+            },
+            {
+              "number": 2,
+              "value": "MuscleGain"
+            },
+            {
+              "number": 3,
+              "value": "Toning"
+            },
+            {
+              "number": 4,
+              "value": "Mobility"
+            },
+            {
+              "number": 5,
+              "value": "HealthyLifestyle"
+            }
+          ]
+        }
+      },
+      {
+        "name": "subscription_tier",
+        "description": "User's subscription plan.",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal business data."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Free"
+          },
+          {
+            "number": 2,
+            "value": "Premium"
+          }
+        ]
+      },
+      {
+        "name": "subscription_expiry_date",
+        "description": "The date when the premium subscription expires, in 10-digit unix timestamp string.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal business data."
+        },
+        "nullable": true,
+        "format": "timestamp"
+      },
+      {
+        "name": "preferences",
+        "description": "User's application preferences.",
+        "type": 102,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User settings for application experience."
+        },
+        "nullable": true,
+        "inner": [
+          {
+            "name": "dark_mode",
+            "description": "Whether dark mode is enabled.",
+            "type": 3,
+            "compliance": {
+              "confidentiality": 2,
+              "reason": "User UI preference."
+            }
+          },
+          {
+            "name": "language",
+            "description": "User's preferred language.",
+            "type": 1,
+            "compliance": {
+              "confidentiality": 2,
+              "reason": "User UI preference."
+            }
+          },
+          {
+            "name": "notifications_enabled",
+            "description": "Whether notifications are enabled.",
+            "type": 3,
+            "compliance": {
+              "confidentiality": 2,
+              "reason": "User communication preference."
+            }
+          }
+        ]
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "email"
+        ],
+        "unique": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "subscription_tier"
+        ],
+        "order": false
+      }
+    ]
+  },
+  "task": {
+    "id": "69299b9cbe7b168045cb8253",
+    "root": "6927837783045624aba5d052",
+    "project": "6927837783045624aba5d051",
+    "user": "98215300-30c1-7025-5804-86fe38e61976"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

@@ -1,0 +1,204 @@
+{
+  "id": "102019ac25e7e4073a89cdad23d059d95d5",
+  "version": "102019aca8871857d468edae750e17b27cf",
+  "schema": {
+    "name": "nutrition_log",
+    "description": "Logs meals consumed by users.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for the nutrition log.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal identifier."
+        }
+      },
+      {
+        "name": "user_id",
+        "description": "Identifier of the user who consumed the meal.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Links log to a user."
+        }
+      },
+      {
+        "name": "recipe_id",
+        "description": "Identifier of the recipe that was consumed.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Links log to a specific recipe."
+        }
+      },
+      {
+        "name": "consumed_at",
+        "description": "Timestamp when the meal was consumed in 10-digit unix timestamp string.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User activity data."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "meal_type",
+        "description": "Type of meal (e.g., Breakfast, Lunch, Dinner, Snack).",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User activity data."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Breakfast"
+          },
+          {
+            "number": 2,
+            "value": "Lunch"
+          },
+          {
+            "number": 3,
+            "value": "Dinner"
+          },
+          {
+            "number": 4,
+            "value": "Snack"
+          }
+        ]
+      },
+      {
+        "name": "calories",
+        "description": "Calories consumed in this meal.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "User activity data."
+        },
+        "numeric": "float"
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "user_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "recipe_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "consumed_at",
+          "user_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      }
+    ],
+    "relations": [
+      {
+        "referencing_fields": [
+          "user_id"
+        ],
+        "referenced_entity": {
+          "name": "user_profile"
+        },
+        "referenced_fields": [
+          "id"
+        ],
+        "cascade": true
+      },
+      {
+        "referencing_fields": [
+          "recipe_id"
+        ],
+        "referenced_entity": {
+          "name": "nutrition_recipe"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "task": {
+    "id": "69299b9cbe7b168045cb8253",
+    "root": "6927837783045624aba5d052",
+    "project": "6927837783045624aba5d051",
+    "user": "98215300-30c1-7025-5804-86fe38e61976"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}
