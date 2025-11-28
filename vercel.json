@@ -1,9 +1,10 @@
 {
+{
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "rm -rf node_modules/.vite && rm -rf dist && npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "rm -rf node_modules && npm install",
   "framework": null,
   "routes": [
     {
