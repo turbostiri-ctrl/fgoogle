@@ -35,7 +35,10 @@ import type {
   CountRankedListResponse,
 } from "./common";
 
-const BASE_URL = "https://api-production.creao.ai";
+// Use Vercel proxy in production, direct API in development
+const BASE_URL = import.meta.env.PROD 
+  ? "/api"  // Production: use Vercel proxy to avoid CORS
+  : "https://api-production.creao.ai";  // Development: direct API
 const BASE_TIMEOUT = 30000;
 
 
