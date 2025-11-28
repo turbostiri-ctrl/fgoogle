@@ -1,64 +1,31 @@
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
-  },
-};
-
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
+  const { creao_access_token } = req.query;
+  
+  if (!creao_access_token) {
+    return res.status(400).json({ error: 'Missing token' });
+  }
+
   try {
-    const { creao_access_token } = req.query;
+    const url = `https://api-production.creao.ai/data/store/v1/get?creao_access_token=${creao_access_token}`;
     
-    if (!creao_access_token) {
-      console.error('Missing creao_access_token');
-      return res.status(400).json({ error: 'Missing creao_access_token' });
-    }
-
-    // Get body from req.body (parsed by Vercel)
-    const bodyData = req.body || {};
-    
-    console.log('Request body type:', typeof bodyData);
-    console.log('Request body:', JSON.stringify(bodyData, null, 2));
-    console.log('Body keys:', Object.keys(bodyData));
-
-    const targetUrl = `https://api-production.creao.ai/data/store/v1/get?creao_access_token=${creao_access_token}`;
-
-    console.log('Proxying to:', targetUrl);
-    console.log('Sending body:', JSON.stringify(bodyData, null, 2));
-
-    const response = await fetch(targetUrl, {
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bodyData),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body || {}),
     });
-
-    console.log('Response status:', response.status);
 
     const data = await response.json();
-    
-    console.log('Response data:', JSON.stringify(data, null, 2));
-
     return res.status(response.status).json(data);
-  } catch (error) {
-    console.error('Proxy error:', error.message);
-    console.error('Stack:', error.stack);
-    return res.status(500).json({ 
-      error: 'Proxy request failed',
-      details: error.message
-    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
