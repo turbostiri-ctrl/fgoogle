@@ -12,18 +12,19 @@ export default async function handler(req) {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  const url = new URL(req.url);
-  const token = url.searchParams.get('creao_access_token');
-
-  if (!token) {
-    return new Response(
-      JSON.stringify({ error: 'Missing token' }),
-      { status: 400, headers: corsHeaders }
-    );
-  }
-
   try {
-    const text = await req.text();
+    const url = new URL(req.url);
+    const token = url.searchParams.get('creao_access_token');
+
+    if (!token) {
+      return new Response(
+        JSON.stringify({ error: 'Missing token' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    const clonedReq = req.clone();
+    const text = await clonedReq.text();
     const body = text ? JSON.parse(text) : {};
 
     const targetUrl = `https://api-production.creao.ai/data/store/v1/insert?creao_access_token=${token}`;
@@ -42,6 +43,7 @@ export default async function handler(req) {
     });
   } catch (err) {
     console.error('Error:', err.message);
+    
     return new Response(
       JSON.stringify({ error: err.message }),
       { status: 500, headers: corsHeaders }
