@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
     console.log('🔍 Proxying to:', targetUrl);
     console.log('📦 Method:', req.method);
-    console.log('📦 Body:', req.body);
+    console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
 
     // Forward request
     const fetchOptions = {
@@ -36,6 +36,7 @@ export default async function handler(req, res) {
     // Add body for POST/PUT/PATCH
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.body) {
       fetchOptions.body = JSON.stringify(req.body);
+      console.log('📤 Sending body:', fetchOptions.body);
     }
 
     const response = await fetch(targetUrl, fetchOptions);
@@ -52,7 +53,12 @@ export default async function handler(req, res) {
       data = await response.text();
     }
 
-    console.log('✅ Response data:', data);
+    console.log('📥 Response data:', JSON.stringify(data, null, 2));
+
+    // If error, log it
+    if (!response.ok) {
+      console.error('❌ API Error:', data);
+    }
 
     return res.status(response.status).json(data);
   } catch (error) {
