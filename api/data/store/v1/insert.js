@@ -1,7 +1,8 @@
-// Disable automatic body parsing
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
   },
 };
 
@@ -24,40 +25,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing creao_access_token' });
     }
 
-    // Read body manually
-    let body = '';
-    for await (const chunk of req) {
-      body += chunk.toString();
-    }
-
-    let parsedBody = {};
-    try {
-      parsedBody = body ? JSON.parse(body) : {};
-    } catch (e) {
-      console.error('Failed to parse body:', e);
-      parsedBody = {};
-    }
+    const bodyData = req.body || {};
+    
+    console.log('INSERT - Request body:', JSON.stringify(bodyData, null, 2));
 
     const targetUrl = `https://api-production.creao.ai/data/store/v1/insert?creao_access_token=${creao_access_token}`;
 
     console.log('Proxying INSERT to:', targetUrl);
-    console.log('Body:', JSON.stringify(parsedBody, null, 2));
 
     const response = await fetch(targetUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(parsedBody),
+      body: JSON.stringify(bodyData),
     });
+
+    console.log('INSERT Response status:', response.status);
 
     const data = await response.json();
     
-    console.log('Response:', response.status, data);
+    console.log('INSERT Response data:', JSON.stringify(data, null, 2));
 
     return res.status(response.status).json(data);
   } catch (error) {
-    console.error('Proxy error:', error);
+    console.error('INSERT Proxy error:', error.message);
     return res.status(500).json({ 
       error: 'Proxy request failed',
       details: error.message
