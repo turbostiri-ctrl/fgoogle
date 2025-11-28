@@ -1,9 +1,6 @@
-export const config = {
-  runtime: 'edge',
-};
+export const runtime = 'edge';
 
-export default async function handler(req: Request) {
-  // CORS headers
+export default async function handler(req) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -11,45 +8,43 @@ export default async function handler(req: Request) {
     'Content-Type': 'application/json',
   };
 
-  // Handle preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
+  const url = new URL(req.url);
+  const token = url.searchParams.get('creao_access_token');
+
+  if (!token) {
+    return new Response(
+      JSON.stringify({ error: 'Missing token' }),
+      { status: 400, headers: corsHeaders }
+    );
+  }
+
   try {
-    const url = new URL(req.url);
-    const creao_access_token = url.searchParams.get('creao_access_token');
+    const text = await req.text();
+    const body = text ? JSON.parse(text) : {};
 
-    if (!creao_access_token) {
-      return new Response(
-        JSON.stringify({ error: 'Missing token' }),
-        { status: 400, headers: corsHeaders }
-      );
-    }
+    console.log('Body:', body);
 
-    // Read body
-    const body = await req.json();
+    const targetUrl = `https://api-production.creao.ai/data/store/v1/get?creao_access_token=${token}`;
 
-    console.log('GET - Body:', JSON.stringify(body, null, 2));
-
-    const targetUrl = `https://api-production.creao.ai/data/store/v1/get?creao_access_token=${creao_access_token}`;
-
-    const response = await fetch(targetUrl, {
+    const res = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
 
-    const data = await response.json();
-
-    console.log('GET - Response:', response.status, data);
+    const data = await res.json();
+    console.log('Response:', res.status);
 
     return new Response(JSON.stringify(data), {
-      status: response.status,
+      status: res.status,
       headers: corsHeaders,
     });
-  } catch (err: any) {
-    console.error('GET - Error:', err.message);
+  } catch (err) {
+    console.error('Error:', err.message);
     return new Response(
       JSON.stringify({ error: err.message }),
       { status: 500, headers: corsHeaders }
