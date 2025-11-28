@@ -12,7 +12,6 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string }>;
-  googleAuth: (googleId: string, email: string, name: string, picture?: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateUser: (updates: Partial<UserProfileModel>) => Promise<void>;
   isPremium: boolean;
@@ -117,50 +116,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const googleAuth = async (googleId: string, email: string, name: string, picture?: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      // Check if user exists by email
-      const existingUsers = await orm.getUserProfileByEmail(email);
-
-      if (existingUsers.length > 0) {
-        // User exists - login
-        const foundUser = existingUsers[0];
-        setUser(foundUser);
-        if (foundUser.id) {
-          localStorage.setItem('userId', foundUser.id);
-        }
-        return { success: true };
-      }
-
-      // User doesn't exist - create new account
-      const newUsers = await orm.insertUserProfile([{
-        email,
-        password: googleId, // Store Google ID as password identifier
-        name,
-        subscription_tier: UserProfileSubscriptionTier.Free,
-        preferences: {
-          dark_mode: false,
-          language: 'en',
-          notifications_enabled: true
-        }
-      } as UserProfileModel]);
-
-      if (newUsers.length > 0) {
-        const newUser = newUsers[0];
-        setUser(newUser);
-        if (newUser.id) {
-          localStorage.setItem('userId', newUser.id);
-        }
-        return { success: true };
-      }
-
-      return { success: false, error: 'Failed to create account' };
-    } catch (error) {
-      console.error('Google auth error:', error);
-      return { success: false, error: 'Google authentication failed. Please try again.' };
-    }
-  };
-
   const logout = () => {
     setUser(null);
     localStorage.removeItem('userId');
@@ -185,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (!user.subscription_expiry_date || new Date(user.subscription_expiry_date) > new Date());
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, googleAuth, logout, updateUser, isPremium }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateUser, isPremium }}>
       {children}
     </AuthContext.Provider>
   );
