@@ -25,14 +25,14 @@ export default async function handler(req) {
 
     const clonedReq = req.clone();
     const text = await clonedReq.text();
-    const body = text ? JSON.parse(text) : {};
+    const bodyData = text && text.length > 0 ? JSON.parse(text) : {};
 
     const targetUrl = `https://api-production.creao.ai/data/store/v1/insert?creao_access_token=${token}`;
 
     const res = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(bodyData),
     });
 
     const data = await res.json();
