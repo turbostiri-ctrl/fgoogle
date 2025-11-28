@@ -1,4 +1,3 @@
-modified_client_ts = '''import { authApi } from "@/lib/auth-integration";
 import { DataType, Direction, SimpleSelector } from "./common";
 import type {
   Page,
@@ -35,13 +34,12 @@ import type {
   CountRankedListResponse,
 } from "./common";
 
-// FORȚEAZĂ proxy-ul pentru a testa
+// Use Vercel proxy to avoid CORS
 const BASE_URL = "/api";
 const BASE_TIMEOUT = 30000;
 
 // Creao access token
 const CREAO_ACCESS_TOKEN = import.meta.env.VITE_CREAO_ACCESS_TOKEN || "OHAwMipcZ1FcYWhneHccCQ0Lc2Jocn9NCRUPc2BwbHoWCAwVe2QjJHwWXQ4JemVzY2MMTFlLKA0sJW0UGg4BcWt8I3ZNWl0PIWNzeX8aDVtae2Bwcm0CGkhKLDggIjtxUVwaeXBzeH0ZAAsPdGp2cXsbDgoMIjAkdCseDQkaPg==";
-
 
 /**
  * Client for DataStore service.
@@ -55,6 +53,9 @@ export class DataStoreClient {
   private constructor(timeout: number = BASE_TIMEOUT) {
     this.host = BASE_URL;
     this.timeout = timeout;
+    console.log('🏗️ DataStoreClient initialized');
+    console.log('🏗️ BASE_URL:', BASE_URL);
+    console.log('🏗️ Has token:', !!CREAO_ACCESS_TOKEN);
   }
 
   /**
@@ -73,29 +74,42 @@ export class DataStoreClient {
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
     try {
-      // Add Creao access token to the URL
+      // Build URL with Creao access token
       const separator = endpoint.includes('?') ? '&' : '?';
-      const urlWithToken = `${this.host}${endpoint}${separator}creao_access_token=${CREAO_ACCESS_TOKEN}`;
+      const url = `${this.host}${endpoint}${separator}creao_access_token=${CREAO_ACCESS_TOKEN}`;
       
-      const response = await authApi.post(
-        urlWithToken,
-        data,
-        { signal: controller.signal }
-      );
+      console.log('🔍 Request URL:', url);
+      console.log('📦 Request body:', JSON.stringify(data, null, 2));
+
+      // Use fetch directly to ensure we use the Vercel proxy
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        signal: controller.signal,
+      });
+
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unknown error');
-        console.error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        console.error(`❌ HTTP error! status: ${response.status}, body:`, errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('✅ Response data:', result);
+
+      return result;
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
-        console.error(`Request timeout after ${this.timeout} seconds`);
+        console.error(`⏱️ Request timeout after ${this.timeout} seconds`);
         throw new Error(`Request timeout after ${this.timeout} seconds`);
       }
-      console.error('Request error:', error);
+      console.error('❌ Request error:', error);
       throw error;
     } finally {
       clearTimeout(timeoutId);
@@ -395,14 +409,3 @@ function parseObjectValue(value: Value[]): Record<string, unknown> {
 
 // Export convenience types
 export type { Page, Format, Value, Filter, Index, Sort };
-'''
-
-print("✅ FIȘIER MODIFICAT: src/components/data/orm/client.ts")
-print("\n" + "="*80)
-print("\n🔧 MODIFICĂRI FĂCUTE:\n")
-print("1. ✅ Adăugat constanta CREAO_ACCESS_TOKEN (linia 38-39)")
-print("2. ✅ Modificat funcția request() să adauge token-ul în URL (linia 67-70)")
-print("3. ✅ Adăugat logging pentru debugging (linia 76-77, 87)")
-print("\n" + "="*80)
-print("\n📄 CONȚINUT COMPLET:\n")
-print(modified_client_ts)
