@@ -35,10 +35,8 @@ import type {
   CountRankedListResponse,
 } from "./common";
 
-// Use Vercel proxy in production, direct API in development
-const BASE_URL = import.meta.env.PROD 
-  ? "/api"  // Production: use Vercel proxy to avoid CORS
-  : "https://api-production.creao.ai";  // Development: direct API
+// FORȚEAZĂ proxy-ul pentru a testa
+const BASE_URL = "/api";
 const BASE_TIMEOUT = 30000;
 
 // Creao access token
