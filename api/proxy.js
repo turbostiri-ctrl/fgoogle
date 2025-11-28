@@ -1,3 +1,10 @@
+// Disable body parsing, we'll handle it manually
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+};
+
 export default async function handler(req, res) {
   // Set CORS headers FIRST
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -12,9 +19,10 @@ export default async function handler(req, res) {
 
   try {
     // Parse query parameters
-    const { target, creao_access_token, ...otherParams } = req.query;
+    const { target, creao_access_token } = req.query;
     
     if (!target) {
+      console.error('❌ Missing target parameter');
       return res.status(400).json({ error: 'Missing target parameter' });
     }
 
@@ -23,9 +31,9 @@ export default async function handler(req, res) {
 
     console.log('🔍 Proxying to:', targetUrl);
     console.log('📦 Method:', req.method);
-    console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
+    console.log('📦 Request body:', req.body);
 
-    // Forward request
+    // Prepare fetch options
     const fetchOptions = {
       method: req.method,
       headers: {
@@ -34,9 +42,14 @@ export default async function handler(req, res) {
     };
 
     // Add body for POST/PUT/PATCH
-    if (req.method !== 'GET' && req.method !== 'HEAD' && req.body) {
-      fetchOptions.body = JSON.stringify(req.body);
-      console.log('📤 Sending body:', fetchOptions.body);
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      if (req.body) {
+        // Body is already parsed by Vercel
+        fetchOptions.body = JSON.stringify(req.body);
+        console.log('📤 Sending body:', fetchOptions.body);
+      } else {
+        console.warn('⚠️ No body in request');
+      }
     }
 
     const response = await fetch(targetUrl, fetchOptions);
@@ -53,7 +66,7 @@ export default async function handler(req, res) {
       data = await response.text();
     }
 
-    console.log('📥 Response data:', JSON.stringify(data, null, 2));
+    console.log('📥 Response data:', typeof data === 'string' ? data : JSON.stringify(data, null, 2));
 
     // If error, log it
     if (!response.ok) {
@@ -65,7 +78,8 @@ export default async function handler(req, res) {
     console.error('❌ Proxy error:', error);
     return res.status(500).json({ 
       error: 'Proxy request failed',
-      details: error.message 
+      details: error.message,
+      stack: error.stack
     });
   }
 }
