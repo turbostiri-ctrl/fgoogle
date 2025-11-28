@@ -1,9 +1,12 @@
+{
   "version": 2,
-  "buildCommand": "rm -rf node_modules/.vite && rm -rf dist && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "installCommand": "rm -rf node_modules && npm install",
+  "installCommand": "npm install",
   "framework": null,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "routes": [
     {
       "handle": "filesystem"
@@ -13,3 +16,4 @@
       "dest": "/index.html"
     }
   ]
+}
