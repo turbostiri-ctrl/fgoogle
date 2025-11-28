@@ -23,41 +23,19 @@ export default async function handler(req) {
       );
     }
 
-    // Clone request to avoid consumption issues
     const clonedReq = req.clone();
-    
-    let body = {};
-    
-    // Only read body for POST requests
-    if (req.method === 'POST') {
-      try {
-        const text = await clonedReq.text();
-        console.log('Raw text length:', text.length);
-        
-        if (text && text.length > 0) {
-          body = JSON.parse(text);
-          console.log('Parsed body keys:', Object.keys(body));
-        }
-      } catch (parseErr) {
-        console.error('Parse error:', parseErr.message);
-        return new Response(
-          JSON.stringify({ error: 'Invalid JSON', details: parseErr.message }),
-          { status: 400, headers: corsHeaders }
-        );
-      }
-    }
+    const text = await clonedReq.text();
+    const bodyData = text && text.length > 0 ? JSON.parse(text) : {};
+
+    console.log('Body received:', Object.keys(bodyData).length, 'keys');
 
     const targetUrl = `https://api-production.creao.ai/data/store/v1/get?creao_access_token=${token}`;
-
-    console.log('Proxying to Creao API');
 
     const res = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(bodyData),
     });
-
-    console.log('Creao response status:', res.status);
 
     const data = await res.json();
 
@@ -66,15 +44,10 @@ export default async function handler(req) {
       headers: corsHeaders,
     });
   } catch (err) {
-    console.error('Handler error:', err.message);
-    console.error('Stack:', err.stack);
+    console.error('Error:', err.message);
     
     return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error',
-        message: err.message,
-        stack: err.stack 
-      }),
+      JSON.stringify({ error: err.message }),
       { status: 500, headers: corsHeaders }
     );
   }
